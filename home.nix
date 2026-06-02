@@ -163,6 +163,9 @@
     portalPackage = null;
     systemd.enable = false;
     settings = {
+      monitor = [
+        ", preferred, auto, 1"
+      ];
       "$mod" = "SUPER";
       bind = [
         "$mod, Return, exec, kitty"
