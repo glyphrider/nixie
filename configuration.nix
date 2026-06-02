@@ -26,12 +26,30 @@
 
   time.timeZone = "US/Eastern";
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     xwayland.enable = true;
     withUWSM = true;
+  };
+
+  programs.regreet = {
+    enable = true;
+    font = {
+      name = "JetBrainsMono Nerd Font Mono";
+      size = 16;
+      package = pkgs.nerd-fonts.jetbrains-mono;
+    };
+    theme = {
+      name = "Canta-dark";
+      package = pkgs.canta-theme;
+    };
   };
 
   programs.firefox.enable = true;
@@ -50,19 +68,22 @@
       hwaccel = true;
       font-engine = "pango";
       font-size = 14;
-      font-name = "FiraCode Nerd Font Mono";
+      font-name = "JetBrainsMono Nerd Font Mono";
     };
   };
 
   fonts.packages = with pkgs; [
     nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.iosevka
+    nerd-fonts.caskaydia-cove
   ];
 
   security.sudo.wheelNeedsPassword = false;
 
   users.users.brian = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "video" ];
+    extraGroups = [ "wheel" "video" "input" "audio" ];
     packages = with pkgs; [
       tree
       claude-code

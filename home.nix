@@ -21,8 +21,20 @@
     };
   };
 
+  home.packages = with pkgs; [
+    brightnessctl
+  ];
+
   home.shell = {
     enableZshIntegration = true;
+  };
+
+  home.pointerCursor = {
+    gtk.enable = true;
+    package = pkgs.capitaine-cursors;
+    #name = "Capitaine Cursors - White";
+    name = "capitaine-cursors-white";
+    size = 24;
   };
 
   programs.zsh = {
@@ -144,19 +156,20 @@
   };
 
   programs.kitty.enable = true;
+
   wayland.windowManager.hyprland = {
     enable = true;
     package = null;
     portalPackage = null;
     systemd.enable = false;
-    # systemd.variables = [ "--all" ];
-    # configType = "lua";
     settings = {
       "$mod" = "SUPER";
       bind = [
         "$mod, Return, exec, kitty"
         "$mod, F, exec, firefox"
         "$mod SHIFT, X, exit"
+        ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
+        ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
       ] ++ (
         builtins.concatLists (
           builtins.genList (
