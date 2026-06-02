@@ -70,6 +70,7 @@
       if [ -z "$XDG_RUNTIME_DIR" ]; then
         export XDG_RUNTIME_DIR=/run/user/$(id -u)
       fi
+      [[ "$TERM" =~ "tmux" || "$TERM" =~ "screen" ]] || fastfetch
     '';
   };
 
