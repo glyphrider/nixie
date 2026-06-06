@@ -83,7 +83,7 @@
 
   users.users.brian = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "video" "input" "audio" ];
+    extraGroups = [ "wheel" "video" "input" "audio" "dialout" ];
     packages = with pkgs; [
       tree
       claude-code
@@ -109,6 +109,7 @@
     git
     hyprpaper
     pango
+    minicom
   ];
 
   programs.zsh.enable = true;
