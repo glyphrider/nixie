@@ -34,11 +34,14 @@
     afetch
     fastfetch
     minicom
+    grim
+    slurp
     inputs.hyprpaper.packages.${pkgs.system}.hyprpaper
   ];
 
   programs.firefox = {
     enable = true;
+    configPath = ".mozilla/firefox";
     profiles.brian = {
       isDefault = true;
       settings = {
@@ -54,6 +57,14 @@
 
   home.shell = {
     enableZshIntegration = true;
+  };
+
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra;
+    };
   };
 
   home.pointerCursor = {
@@ -196,10 +207,23 @@
     settings.main.font = "NotoSansM Nerd Font Mono:size=12";
   };
 
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    icons = "auto";
+    git = true;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
     package = null;
     portalPackage = null;
+    configType = "hyprlang";
     systemd.enable = false;
     settings = {
       monitor = [
@@ -208,6 +232,7 @@
       exec-once = [
         "hyprpaper -c /home/brian/.config/hypr/hyprpaper.conf"
         "waybar"
+        "mako"
       ];
       windowrule = [
         "opacity 0.75 0.75, match:class ^(kitty)$"
@@ -230,6 +255,8 @@
         "$mod SHIFT, X, exit"
         ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
         ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
+        ", Print, exec, grim ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png"
+        ''$mod SHIFT, S, exec, grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png''
       ] ++ (
         builtins.concatLists (
           builtins.genList (
@@ -360,6 +387,18 @@
     };
   };
 
+  services.mako = {
+    enable = true;
+    settings = {
+      background-color = "#000000bb";
+      text-color = "#ffffffff";
+      border-color = "#ffffffaa";
+      border-radius = 8;
+      border-size = 2;
+      default-timeout = 5000;
+    };
+  };
+
   services.hypridle = {
     enable = true;
     settings = {
@@ -435,6 +474,17 @@
       path = /home/brian/Pictures/wallpapers/19386416.jpg
     }
   '';
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = "firefox.desktop";
+      "x-scheme-handler/http" = "firefox.desktop";
+      "x-scheme-handler/https" = "firefox.desktop";
+      "x-scheme-handler/about" = "firefox.desktop";
+      "x-scheme-handler/unknown" = "firefox.desktop";
+    };
+  };
 
   xdg.configFile."nvim" = {
     source = "${inputs.nvim-config}";
