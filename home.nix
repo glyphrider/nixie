@@ -25,7 +25,32 @@
     brightnessctl
     fuzzel
     tofi
+    tree
+    claude-code
+    neovim
+    gcc
+    unzip
+    stow
+    afetch
+    fastfetch
+    minicom
+    inputs.hyprpaper.packages.${pkgs.system}.hyprpaper
   ];
+
+  programs.firefox = {
+    enable = true;
+    profiles.brian = {
+      isDefault = true;
+      settings = {
+        "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org";
+        "ui.systemUsesDarkTheme" = 1;
+      };
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+        bitwarden
+        ublock-origin
+      ];
+    };
+  };
 
   home.shell = {
     enableZshIntegration = true;

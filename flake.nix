@@ -14,6 +14,7 @@
       url = "github:glyphrider/kickstart.nvim";
       flake = false;
     };
+    nur.url = "github:nix-community/NUR";
   };
   outputs =
     {
@@ -23,6 +24,7 @@
       nvim-config,
       hyprland,
       hyprpaper,
+      nur,
       ...
     }@inputs:
     {
@@ -31,6 +33,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
+          { nixpkgs.overlays = [ nur.overlays.default ]; }
           home-manager.nixosModules.default
           {
             home-manager = {

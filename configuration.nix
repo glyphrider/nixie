@@ -52,8 +52,6 @@
     };
   };
 
-  programs.firefox.enable = true;
-
   # services.qemuGuest.enable = true;
   # services.spice-vdagentd.enable = true;
 
@@ -85,18 +83,6 @@
   users.users.brian = {
     isNormalUser = true;
     extraGroups = [ "wheel" "video" "input" "audio" "dialout" ];
-    packages = with pkgs; [
-      tree
-      claude-code
-      neovim
-      gcc
-      unzip
-      git
-      stow
-      tmux
-      afetch
-      fastfetch
-    ];
     shell = pkgs.zsh;
     linger = true;
   };
@@ -104,13 +90,7 @@
   environment.systemPackages = with pkgs; [
     vim
     wget
-    foot
-    kitty
-    waybar
-    git
-    inputs.hyprpaper.packages.${pkgs.system}.hyprpaper
     pango
-    minicom
   ];
 
   programs.zsh.enable = true;
