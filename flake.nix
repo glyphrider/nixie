@@ -6,6 +6,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "github:hyprwm/Hyprland";
+    hyprpaper = {
+      url = "github:hyprwm/hyprpaper";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nvim-config = {
       url = "github:glyphrider/kickstart.nvim";
       flake = false;
@@ -18,6 +22,7 @@
       home-manager,
       nvim-config,
       hyprland,
+      hyprpaper,
       ...
     }@inputs:
     {

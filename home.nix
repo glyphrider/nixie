@@ -167,6 +167,9 @@
       monitor = [
         ", preferred, auto, 1"
       ];
+      exec-once = [
+        "hyprpaper -c /home/brian/.config/hypr/hyprpaper.conf"
+      ];
       "$mod" = "SUPER";
       bind = [
         "$mod, Return, exec, kitty"
@@ -188,6 +191,15 @@
       );
     };
   };
+
+  xdg.configFile."hypr/hyprpaper.conf".text = ''
+    splash = false
+
+    wallpaper {
+      monitor = eDP-1
+      path = /home/brian/Pictures/wallpapers/19386416.jpg
+    }
+  '';
 
   xdg.configFile."nvim" = {
     source = "${inputs.nvim-config}";

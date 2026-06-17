@@ -107,7 +107,7 @@
     kitty
     waybar
     git
-    hyprpaper
+    inputs.hyprpaper.packages.${pkgs.system}.hyprpaper
     pango
     minicom
   ];
