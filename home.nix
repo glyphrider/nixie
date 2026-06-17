@@ -184,6 +184,9 @@
         "hyprpaper -c /home/brian/.config/hypr/hyprpaper.conf"
         "waybar"
       ];
+      windowrule = [
+        "opacity 0.75 0.75, match:class ^(kitty)$"
+      ];
       general = {
         gaps_in = 3;
         gaps_out = 8;
