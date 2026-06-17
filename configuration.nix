@@ -77,6 +77,7 @@
     nerd-fonts.jetbrains-mono
     nerd-fonts.iosevka
     nerd-fonts.caskaydia-cove
+    nerd-fonts.noto
   ];
 
   security.sudo.wheelNeedsPassword = false;

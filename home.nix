@@ -23,6 +23,8 @@
 
   home.packages = with pkgs; [
     brightnessctl
+    fuzzel
+    tofi
   ];
 
   home.shell = {
@@ -156,7 +158,18 @@
     '';
   };
 
-  programs.kitty.enable = true;
+  programs.kitty = {
+    enable = true;
+    font = {
+      name = "Noto Sans Nerd Font Mono";
+      size = 12;
+    };
+  };
+
+  programs.foot = {
+    enable = true;
+    settings.main.font = "Noto Sans Nerd Font Mono:size=12";
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -169,10 +182,20 @@
       ];
       exec-once = [
         "hyprpaper -c /home/brian/.config/hypr/hyprpaper.conf"
+        "waybar"
       ];
+      general = {
+        gaps_in = 3;
+        gaps_out = 8;
+      };
+      decoration = {
+        rounding = 8;
+      };
       "$mod" = "SUPER";
       bind = [
         "$mod, Return, exec, kitty"
+        "$mod, R, exec, fuzzel"
+        "$mod, D, exec, tofi-drun --drun-launch=true"
         "$mod, F, exec, firefox"
         "$mod SHIFT, X, exit"
         ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
@@ -191,6 +214,114 @@
       );
     };
   };
+
+  programs.waybar = {
+    enable = true;
+    style = ''
+      * {
+        font-family: "Noto Sans Nerd Font";
+        font-size: 14px;
+      }
+      window#waybar {
+        background: rgba(0, 0, 0, 0.45);
+        color: #ffffff;
+      }
+      #workspaces button {
+        color: #888888;
+        padding: 0 6px;
+      }
+      #workspaces button.active {
+        color: #ffffff;
+        border-bottom: 2px solid #ffffff;
+      }
+      #network, #battery {
+        padding: 0 10px;
+        color: #ffffff;
+      }
+      #network.wifi {
+        color: #a6e3a1;
+      }
+      #network.ethernet {
+        color: #f9e2af;
+      }
+      #network.disconnected {
+        color: #f38ba8;
+      }
+      #battery.charging {
+        color: #a6e3a1;
+      }
+      #battery.critical:not(.charging) {
+        color: #f38ba8;
+      }
+    '';
+    settings = [{
+      layer = "top";
+      position = "top";
+      modules-left = [ "hyprland/workspaces" ];
+      modules-center = [ "custom/clock" ];
+      modules-right = [ "tray" "network" "battery" ];
+      "hyprland/workspaces" = {
+        format = "{id}";
+      };
+      "custom/clock" = {
+        exec = "date '+%A, %B %d  %-I:%M %p'";
+        interval = 10;
+        format = "{}";
+      };
+      network = {
+        format-wifi = "{essid} 󰤨";
+        format-ethernet = "{ifname} 󰈀";
+        format-disconnected = "󰤭";
+        tooltip-format-wifi = "{signalStrength}% {frequency}MHz";
+      };
+      battery = {
+        format = "{capacity}% {icon}";
+        format-charging = "{capacity}% 󰂄";
+        format-icons = [ "󰂎" "󰁺" "󰁽" "󰁿" "󰁹" ];
+        states = { critical = 15; };
+      };
+    }];
+  };
+
+  xdg.configFile."tofi/config".text = ''
+    font = Noto Sans Nerd Font
+    font-size = 11
+    width = 100%
+    height = 32
+    anchor = top
+    margin-top = 0
+    padding-left = 8
+    padding-right = 8
+    padding-top = 4
+    padding-bottom = 4
+    outline-width = 0
+    border-width = 0
+    corner-radius = 0
+    background-color = #000000bb
+    text-color = #ffffffff
+    prompt-color = #a6e3a1ff
+    selection-color = #ffffffff
+    selection-background = #ffffff1a
+    result-spacing = 16
+    num-results = 8
+  '';
+
+  xdg.configFile."fuzzel/fuzzel.ini".text = ''
+    [main]
+    font=Noto Sans Nerd Font:size=11
+    width=40
+    lines=8
+    border-radius=8
+    border-width=3
+
+    [colors]
+    background=000000bb
+    text=ffffffff
+    match=a6e3a1ff
+    selection=ffffff1a
+    selection-text=ffffffff
+    border=ffffffaa
+  '';
 
   xdg.configFile."hypr/hyprpaper.conf".text = ''
     splash = false
