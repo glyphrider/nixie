@@ -161,14 +161,14 @@
   programs.kitty = {
     enable = true;
     font = {
-      name = "Noto Sans Nerd Font Mono";
+      name = "NotoSansM Nerd Font Mono";
       size = 12;
     };
   };
 
   programs.foot = {
     enable = true;
-    settings.main.font = "Noto Sans Nerd Font Mono:size=12";
+    settings.main.font = "NotoSansM Nerd Font Mono:size=12";
   };
 
   wayland.windowManager.hyprland = {
@@ -186,6 +186,7 @@
       ];
       windowrule = [
         "opacity 0.75 0.75, match:class ^(kitty)$"
+        "opacity 0.75 0.75, match:class ^(foot)$"
       ];
       general = {
         gaps_in = 3;
@@ -200,6 +201,7 @@
         "$mod, R, exec, fuzzel"
         "$mod, D, exec, tofi-drun --drun-launch=true"
         "$mod, F, exec, firefox"
+        "$mod, X, exec, hyprlock"
         "$mod SHIFT, X, exit"
         ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
         ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
@@ -284,6 +286,80 @@
         states = { critical = 15; };
       };
     }];
+  };
+
+  programs.hyprlock = {
+    enable = true;
+    settings = {
+      general = {
+        disable_loading_bar = true;
+        hide_cursor = true;
+      };
+      background = [{
+        monitor = "";
+        path = "screenshot";
+        blur_passes = 3;
+        blur_size = 8;
+      }];
+      label = [
+        {
+          monitor = "";
+          text = ''cmd[update:1000] date "+%-I:%M %p"'';
+          font_size = 96;
+          font_family = "NotoSansM Nerd Font Mono";
+          position = "0, 100";
+          halign = "center";
+          valign = "center";
+        }
+        {
+          monitor = "";
+          text = ''cmd[update:60000] date "+%A, %B %d"'';
+          font_size = 24;
+          font_family = "NotoSansM Nerd Font Mono";
+          position = "0, 10";
+          halign = "center";
+          valign = "center";
+        }
+      ];
+      input-field = [{
+        monitor = "";
+        size = "300, 50";
+        position = "0, -80";
+        halign = "center";
+        valign = "center";
+        dots_center = true;
+        fade_on_empty = false;
+        placeholder_text = "";
+        shadow_passes = 2;
+      }];
+    };
+  };
+
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        lock_cmd = "pidof hyprlock || hyprlock";
+        before_sleep_cmd = "loginctl lock-session";
+        after_sleep_cmd = "hyprctl dispatch dpms on";
+      };
+      listener = [
+        {
+          timeout = 300;
+          on-timeout = "brightnessctl -s set 10%";
+          on-resume = "brightnessctl -r";
+        }
+        {
+          timeout = 600;
+          on-timeout = "loginctl lock-session";
+        }
+        {
+          timeout = 660;
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume = "hyprctl dispatch dpms on";
+        }
+      ];
+    };
   };
 
   xdg.configFile."tofi/config".text = ''
