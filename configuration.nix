@@ -20,6 +20,12 @@
     efiSysMountPoint = "/efi";
   };
 
+  boot.initrd.systemd.enable = true;
+  boot.plymouth = {
+    enable = true;
+  };
+  boot.kernelParams = [ "quiet" "splash" ];
+
   networking.hostName = "nixie"; # Define your hostname.
 
   networking.networkmanager.enable = true;
@@ -30,6 +36,10 @@
     enable = true;
     enable32Bit = true;
   };
+
+  services.xserver.videoDrivers = [ "amdgpu" ];
+
+  programs.steam.enable = true;
 
   programs.hyprland = {
     enable = true;
