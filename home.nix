@@ -36,7 +36,32 @@
     minicom
     grim
     slurp
+    jq
     inputs.hyprpaper.packages.${pkgs.system}.hyprpaper
+    google-chrome
+    (writeShellApplication {
+      name = "toggle-touchpad";
+      runtimeInputs = [ jq ];
+      text = ''
+        DEVICE_RAW=$(hyprctl devices -j | jq -r '[.mice[] | select(.name | test("(?i)touchpad|trackpad"))][0].name // empty')
+
+        if [ -z "$DEVICE_RAW" ]; then
+          hyprctl notify -1 3000 0 "No touchpad device found"
+          exit 1
+        fi
+
+        STATE_FILE="/tmp/touchpad-disabled"
+        if [ -f "$STATE_FILE" ]; then
+          hyprctl keyword "device[$DEVICE_RAW]:enabled" true
+          rm "$STATE_FILE"
+          hyprctl notify 1 2000 0 "Touchpad enabled"
+        else
+          hyprctl keyword "device[$DEVICE_RAW]:enabled" false
+          touch "$STATE_FILE"
+          hyprctl notify 1 2000 0 "Touchpad disabled"
+        fi
+      '';
+    })
   ];
 
   programs.firefox = {
@@ -257,6 +282,7 @@
         ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
         ", Print, exec, grim ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png"
         ''$mod SHIFT, S, exec, grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png''
+        "$mod CONTROL, XF86TouchpadToggle, exec, toggle-touchpad"
       ] ++ (
         builtins.concatLists (
           builtins.genList (
@@ -478,11 +504,11 @@
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "text/html" = "firefox.desktop";
-      "x-scheme-handler/http" = "firefox.desktop";
-      "x-scheme-handler/https" = "firefox.desktop";
-      "x-scheme-handler/about" = "firefox.desktop";
-      "x-scheme-handler/unknown" = "firefox.desktop";
+      "text/html" = "google-chrome.desktop";
+      "x-scheme-handler/http" = "google-chrome.desktop";
+      "x-scheme-handler/https" = "google-chrome.desktop";
+      "x-scheme-handler/about" = "google-chrome.desktop";
+      "x-scheme-handler/unknown" = "google-chrome.desktop";
     };
   };
 
