@@ -280,6 +280,9 @@
         "$mod SHIFT, X, exit"
         ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
         ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
+        ",  XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+        ",  XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ",  XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", Print, exec, grim ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png"
         ''$mod SHIFT, S, exec, grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png''
         "$mod CONTROL, XF86TouchpadToggle, exec, toggle-touchpad"
@@ -317,9 +320,12 @@
         color: #ffffff;
         border-bottom: 2px solid #ffffff;
       }
-      #network, #battery {
+      #network, #battery, #wireplumber {
         padding: 0 10px;
         color: #ffffff;
+      }
+      #wireplumber.muted {
+        color: #6c7086;
       }
       #network.wifi {
         color: #a6e3a1;
@@ -342,7 +348,7 @@
       position = "top";
       modules-left = [ "hyprland/workspaces" ];
       modules-center = [ "custom/clock" ];
-      modules-right = [ "tray" "network" "battery" ];
+      modules-right = [ "tray" "network" "wireplumber" "battery" ];
       "hyprland/workspaces" = {
         format = "{id}";
       };
@@ -356,6 +362,11 @@
         format-ethernet = "{ifname} 󰈀";
         format-disconnected = "󰤭";
         tooltip-format-wifi = "{signalStrength}% {frequency}MHz";
+      };
+      wireplumber = {
+        format = "{volume}% {icon}";
+        format-muted = "󰝟";
+        format-icons = [ "󰕿" "󰖀" "󰕾" ];
       };
       battery = {
         format = "{capacity}% {icon}";
