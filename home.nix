@@ -1,5 +1,10 @@
-{ inputs, config, pkgs, ... }:
+{ inputs, config, pkgs, lib, ... }:
 
+let
+  wallpaper = pkgs.runCommand "wallpaper-19386416" { } ''
+    cp ${./wallpapers/19386416.jpg} $out
+  '';
+in
 {
   programs.git = {
     enable = true;
@@ -37,7 +42,7 @@
     grim
     slurp
     jq
-    inputs.hyprpaper.packages.${pkgs.system}.hyprpaper
+    inputs.hyprpaper.packages.${pkgs.stdenv.hostPlatform.system}.hyprpaper
     google-chrome
     (writeShellApplication {
       name = "toggle-touchpad";
@@ -90,9 +95,11 @@
       name = "Adwaita-dark";
       package = pkgs.gnome-themes-extra;
     };
+    gtk4.theme = config.gtk.theme;
   };
 
   home.pointerCursor = {
+    enable = true;
     gtk.enable = true;
     package = pkgs.capitaine-cursors;
     #name = "Capitaine Cursors - White";
@@ -248,57 +255,117 @@
     enable = true;
     package = null;
     portalPackage = null;
-    configType = "hyprlang";
+    configType = "lua";
     systemd.enable = false;
     settings = {
-      monitor = [
-        ", preferred, auto, 1"
-      ];
-      exec-once = [
-        "hyprpaper -c /home/brian/.config/hypr/hyprpaper.conf"
-        "waybar"
-        "mako"
-      ];
-      windowrule = [
-        "opacity 0.75 0.75, match:class ^(kitty)$"
-        "opacity 0.75 0.75, match:class ^(foot)$"
-      ];
-      general = {
-        gaps_in = 3;
-        gaps_out = 8;
+      on = {
+        _args = [
+          "hyprland.start" (lib.generators.mkLuaInline ''
+            function()
+              hl.exec_cmd("hyprpaper")
+              hl.exec_cmd("waybar")
+              hl.exec_cmd("mako")
+            end
+          '')
+        ];
       };
-      decoration = {
-        rounding = 8;
-      };
-      "$mod" = "SUPER";
+      #general = {
+        #gaps_in = 3;
+        #gaps_out = 8;
+      #};
       bind = [
-        "$mod, Return, exec, kitty"
-        "$mod, R, exec, fuzzel"
-        "$mod, D, exec, tofi-drun --drun-launch=true"
-        "$mod, F, exec, firefox"
-        "$mod, X, exec, hyprlock"
-        "$mod SHIFT, X, exit"
-        ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
-        ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
-        ",  XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-        ",  XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-        ",  XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        ", Print, exec, grim ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png"
-        ''$mod SHIFT, S, exec, grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png''
-        "$mod CONTROL, XF86TouchpadToggle, exec, toggle-touchpad"
-      ] ++ (
-        builtins.concatLists (
-          builtins.genList (
-            i:
-            let ws = i + 1;
-            in [
-              "$mod, code:1${toString i}, workspace, ${toString ws}"
-              "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
-          )
-        9)
-      );
+        {
+          _args = [
+            "SUPER + Return"
+            (lib.generators.mkLuaInline "hl.dsp.exec_cmd('kitty')")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + R"
+            (lib.generators.mkLuaInline "hl.dsp.exec_cmd('fuzzel')")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + D"
+            (lib.generators.mkLuaInline "hl.dsp.exec_cmd('tofi-drun --drun-launch=true')")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + F"
+            (lib.generators.mkLuaInline "hl.dsp.exec_cmd('firefox')")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + X"
+            (lib.generators.mkLuaInline "hl.dsp.exec_cmd('firefox')")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + SHIFT + X"
+            (lib.generators.mkLuaInline "hl.dsp.exit")
+          ];
+        }
+
+#        "mod + Return, exec, kitty"
+#        "mod + R, exec, fuzzel"
+#        "mod + D, exec, tofi-drun --drun-launch=true"
+#        "mod + F, exec, firefox"
+#        "mod + X, exec, hyprlock"
+#        "mod + SHIFT + X, exit"
+#        ",  XF86MonBrightnessUp, exec, brightnessctl set '+5%'"
+#        ",  XF86MonBrightnessDown, exec, brightnessctl set '5%-'"
+#        ",  XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+#        ",  XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+#        ",  XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+#        ", Print, exec, grim ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png"
+#        ''mod SHIFT, S, exec, grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y%m%d-%H%M%S).png''
+#        "mod CONTROL, XF86TouchpadToggle, exec, toggle-touchpad"
+      ];
     };
+    extraConfig = ''
+      hl.monitor({
+        output = "",
+        mode = "preferred",
+        position = "auto",
+        scale = 1
+      })
+      hl.config({
+        general = {
+          gaps_in = 3,
+          gaps_out = 8
+        }
+      })
+      hl.config({
+        input = {
+          touchpad = {
+            tap_to_click = false
+          }
+        }
+      })
+      hl.config({
+        decoration = {
+          rounding = 8
+        }
+      })
+      hl.window_rule({
+        match = { class = "kitty" },
+        opacity = "0.75 0.75"
+      })
+      hl.window_rule({
+        match = { class = "foot" },
+        opacity = "0.75 0.75"
+      })
+      for i = 1, 10 do
+        local key = i % 10
+        hl.bind("SUPER + ".. key, hl.dsp.focus({workspace = i}))
+        hl.bind("SUPER + SHIFT + ".. key, hl.dsp.window.move({workspace = i}))
+      end
+    '';
   };
 
   programs.waybar = {
@@ -508,7 +575,7 @@
 
     wallpaper {
       monitor = eDP-1
-      path = /home/brian/Pictures/wallpapers/19386416.jpg
+      path = ${wallpaper}
     }
   '';
 

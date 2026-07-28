@@ -39,6 +39,11 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
+  services.ollama = {
+    enable = true;
+    package = pkgs.ollama-vulkan;
+  };
+
   programs.steam.enable = true;
 
   programs.hyprland = {
@@ -92,7 +97,7 @@
 
   users.users.brian = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "video" "input" "audio" "dialout" ];
+    extraGroups = [ "wheel" "video" "input" "audio" "dialout" "networkmanager" ];
     shell = pkgs.zsh;
     linger = true;
   };
