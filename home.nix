@@ -307,7 +307,7 @@ in
         {
           _args = [
             "SUPER + SHIFT + X"
-            (lib.generators.mkLuaInline "hl.dsp.exit")
+            (lib.generators.mkLuaInline "hl.dsp.exit()")
           ];
         }
 
