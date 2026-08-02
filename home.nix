@@ -1,8 +1,8 @@
 { inputs, config, pkgs, lib, ... }:
 
 let
-  wallpaper = pkgs.runCommand "wallpaper-19386416" { } ''
-    cp ${./wallpapers/19386416.jpg} $out
+  wallpaper = pkgs.runCommand "wallpaper-nix-nineish-catppuccin-macchiato" { } ''
+    cp ${./wallpapers/nix-wallpaper-nineish-catppuccin-macchiato.png} $out
   '';
 in
 {
