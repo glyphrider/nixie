@@ -54,16 +54,12 @@
     withUWSM = true;
   };
 
-  programs.regreet = {
+  services.displayManager.regreet = {
     enable = true;
     font = {
       name = "JetBrainsMono Nerd Font Mono";
       size = 16;
       package = pkgs.nerd-fonts.jetbrains-mono;
-    };
-    theme = {
-      name = "Canta-dark";
-      package = pkgs.canta-theme;
     };
   };
 
